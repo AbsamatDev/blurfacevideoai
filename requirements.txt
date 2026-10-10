@@ -1,0 +1,8 @@
+# blurface — размытие лиц на видео (Windows 11 / Python 3.10+)
+opencv-python>=4.8,<5
+numpy>=1.24
+python-telegram-bot>=21
+python-dotenv>=1.0
+
+# тесты
+pytest>=8

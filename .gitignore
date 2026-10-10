@@ -1,0 +1,35 @@
+# Секреты
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Временные файлы и большие двоичные данные
+tmp/
+tests_data/
+output/
+
+# Бинарники FFmpeg (~260 МБ) — качаются setup.bat, скрипты в tools/ остаются
+tools/bin/
+
+# Данные локального Bot API-сервера (22 МБ, там же токен в логах!)
+tg-api-data/
+
+# Личные медиа (видео и фото с лицом) — не публикуем
+real_before.png
+real_after.png
+IMG_*
+*.mp4
+*.mov
+*.MOV
+*.MP4
+*.mkv
+*.webm
+*.avi
+!tests_data/.gitkeep
+
+# ONNX-модель (232 КБ) лежит в models/ и попадает в репозиторий

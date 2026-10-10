@@ -1,0 +1,41 @@
+# Локальный Bot API сервер Telegram (образ aiogram/telegram-bot-api).
+# Снимает лимиты облачного API: приём файлов до ~2 ГБ (вместо 20 МБ),
+# отправка до 2000 МБ (вместо 50 МБ).
+#
+# Запуск:  docker compose up -d
+# Логи:    docker compose logs -f telegram-bot-api
+#          (подробный лог: tg-api-data/bot-api.log)
+#
+# Требуется TELEGRAM_API_ID и TELEGRAM_API_HASH в .env — получить бесплатно
+# на https://my.telegram.org (API development tools).
+#
+# Перед первым использованием бот должен один раз выйти из облака:
+#   python tools/local_api.py logout
+# и в .env должно быть: TELEGRAM_API_BASE=http://localhost:8081
+#
+# ВАЖНО: сервер подключается к Telegram напрямую по MTProto (порт 443 к
+# 149.154.x.x). Если в вашей сети MTProto блокируется (например, нужен
+# VPN/прокси), локальный сервер не сможет авторизоваться — в этом случае
+# бот продолжит работать в облачном режиме (лимиты 20/50 МБ).
+services:
+  telegram-bot-api:
+    image: aiogram/telegram-bot-api:latest
+    container_name: blurface-telegram-bot-api
+    restart: unless-stopped
+    # Сервер нужен только боту на этой же машине — наружу не публикуем.
+    ports:
+      - "127.0.0.1:8081:8081"
+    environment:
+      # Образ aiogram/telegram-bot-api строит команду ИЗ переменных окружения
+      # (entrypoint игнорирует `command:`), поэтому всё настраивается здесь.
+      TELEGRAM_API_ID: ${TELEGRAM_API_ID}
+      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH}
+      TELEGRAM_WORK_DIR: /var/lib/telegram-bot-api
+      TELEGRAM_TEMP_DIR: /tmp/telegram-bot-api
+      TELEGRAM_HTTP_PORT: 8081
+      # Непустое значение включает флаг --local (локальный режим без облака).
+      TELEGRAM_LOCAL: "1"
+      TELEGRAM_LOG_FILE: /var/lib/telegram-bot-api/bot-api.log
+      TELEGRAM_VERBOSITY: "2"
+    volumes:
+      - ./tg-api-data:/var/lib/telegram-bot-api
